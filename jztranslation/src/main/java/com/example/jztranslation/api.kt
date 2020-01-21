@@ -127,3 +127,43 @@ fun String.getUrls(): ArrayList<String>? {
     }
     return link
 }
+fun String.autoTranslate(context: Context): String {
+    return try {
+        var locale: Locale? = null
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            locale = context.resources.configuration.locales[0]
+        } else {
+            locale = context.resources.configuration.locale
+        }
+        val url = "https://translate.googleapis.com/translate_a/single?" +
+                "client=gtx&" +
+                "sl=auto"+
+                "&tl=" + locale.toString() +
+                "&dt=t&q=" + URLEncoder.encode(this, "UTF-8")
+        val obj = URL(url)
+        val con = obj.openConnection() as HttpURLConnection
+        con.setRequestProperty("User-Agent", "Mozilla/5.0")
+        val `in` = BufferedReader(
+            InputStreamReader(con.inputStream)
+        )
+        var inputLine: String?
+        val response = StringBuffer()
+        while (`in`.readLine().also { inputLine = it } != null) {
+            response.append(inputLine)
+        }
+        `in`.close()
+        if (response.toString().contains("\"")) {
+        }
+        val jsonArray = JSONArray(response.toString())
+        if (jsonArray.length() == 0) {
+            return "Translation error"
+        }
+        val jsonArray2 = jsonArray[0] as JSONArray
+        if (jsonArray2.length() == 0) {
+            "Translation error"
+        } else (jsonArray2[0] as JSONArray)[0].toString()
+    } catch (e: Exception) {
+        e.fillInStackTrace()
+        "Translation error"
+    }
+}

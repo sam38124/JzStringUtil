@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.example.jztranslation.autoTranslate
 import com.example.jztranslation.getUrls
 import com.example.jztranslation.translate
 
@@ -21,8 +22,10 @@ var handler= Handler()
         setContentView(R.layout.activity_main)
       findViewById<TextView>(R.id.tit).text=text.getUrls()!!.get(0)
         Thread{
-            var a="hello".translate("en",this)
-            handler.post{findViewById<TextView>(R.id.tit).text=a}
+            var english_to_CN="hello".translate("en",this)
+            var english_to_JP="hello".translate("en","jp")
+            var autoTranslate="hello".autoTranslate(this)
+            handler.post{findViewById<TextView>(R.id.tit).text=english_to_CN}
         }.start()
     }
 

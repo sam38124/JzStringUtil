@@ -10,6 +10,7 @@ import com.example.jztranslation.translate
 
 class MainActivity : AppCompatActivity() {
 var handler= Handler()
+
     var text="测试手机：Nubia Z9 mini，Android 7.1，Mokee Rom\n" +
             "\n" +
             "手机texthttps://blog.csdn.net/ys743276112/article/details/71547134系统语言顺序：hi-IN,en-US,zh-CN,zh-HK\n" +

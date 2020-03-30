@@ -24,9 +24,7 @@ import java.util.regex.Pattern
                 val obj = URL(url)
                 val con = obj.openConnection() as HttpURLConnection
                 con.setRequestProperty("User-Agent", "Mozilla/5.0")
-                val `in` = BufferedReader(
-                    InputStreamReader(con.inputStream)
-                )
+                val `in` = BufferedReader(InputStreamReader(con.inputStream))
                 var inputLine: String?
                 val response = StringBuffer()
                 while (`in`.readLine().also { inputLine = it } != null) {
@@ -135,6 +133,40 @@ fun String.autoTranslate(context: Context): String {
         } else {
             locale = context.resources.configuration.locale
         }
+        val url = "https://translate.googleapis.com/translate_a/single?" +
+                "client=gtx&" +
+                "sl=auto"+
+                "&tl=" + locale.toString() +
+                "&dt=t&q=" + URLEncoder.encode(this, "UTF-8")
+        val obj = URL(url)
+        val con = obj.openConnection() as HttpURLConnection
+        con.setRequestProperty("User-Agent", "Mozilla/5.0")
+        val `in` = BufferedReader(
+            InputStreamReader(con.inputStream)
+        )
+        var inputLine: String?
+        val response = StringBuffer()
+        while (`in`.readLine().also { inputLine = it } != null) {
+            response.append(inputLine)
+        }
+        `in`.close()
+        if (response.toString().contains("\"")) {
+        }
+        val jsonArray = JSONArray(response.toString())
+        if (jsonArray.length() == 0) {
+            return "Translation error"
+        }
+        val jsonArray2 = jsonArray[0] as JSONArray
+        if (jsonArray2.length() == 0) {
+            "Translation error"
+        } else (jsonArray2[0] as JSONArray)[0].toString()
+    } catch (e: Exception) {
+        e.fillInStackTrace()
+        "Translation error"
+    }
+}
+fun String.autoTranslate(locale: Locale): String {
+    return try {
         val url = "https://translate.googleapis.com/translate_a/single?" +
                 "client=gtx&" +
                 "sl=auto"+
